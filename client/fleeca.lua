@@ -1,4 +1,4 @@
-QBCore = exports['qb-core']:GetCoreObject()
+local QBCore = exports['qb-core']:GetCoreObject()
 local closestBank = nil
 local inRange
 local requiredItemsShowed = false
@@ -324,7 +324,7 @@ RegisterNetEvent('electronickit:UseElectronickit', function()
                                             TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items["trojan_usb"], "remove")
 
                                             TriggerEvent("mhacking:show")
-                                            TriggerEvent("mhacking:start", math.random(6, 7), math.random(12, 15), OnHackDone)
+                                            TriggerEvent("mhacking:start", math.random(4, 5), math.random(20, 25), OnHackDone)
                                             if not copsCalled then
                                                 local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
                                                 local street1 = GetStreetNameFromHashKey(s1)

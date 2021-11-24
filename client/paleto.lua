@@ -1,8 +1,10 @@
+local QBCore = exports['qb-core']:GetCoreObject()
+
 local requiredItemsShowed = false
 local requiredItemsShowed2 = false
 
-CreateThread(function()
-    Wait(2000)
+Citizen.CreateThread(function()
+    Citizen.Wait(2000)
     local requiredItems = {
         [1] = {name = QBCore.Shared.Items["security_card_01"]["name"], image = QBCore.Shared.Items["security_card_01"]["image"]},
     }
@@ -74,14 +76,15 @@ CreateThread(function()
                 end
             end
             if not inRange then
-                Wait(2500)
+                Citizen.Wait(2500)
             end
         end
-        Wait(1)
+        Citizen.Wait(1)
     end
 end)
 
-RegisterNetEvent('qb-bankrobbery:UseBankcardA', function()
+RegisterNetEvent('qb-bankrobbery:UseBankcardA')
+AddEventHandler('qb-bankrobbery:UseBankcardA', function()
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
     local dist = #(pos - Config.BigBanks["paleto"]["coords"])
@@ -92,7 +95,7 @@ RegisterNetEvent('qb-bankrobbery:UseBankcardA', function()
         QBCore.Functions.TriggerCallback('qb-bankrobbery:server:isRobberyActive', function(isBusy)
             if not isBusy then
                 if CurrentCops >= Config.MinimumPaletoPolice then
-                    if not Config.BigBanks["paleto"]["isOpened"] then
+                    if not Config.BigBanks["paleto"]["isOpened"] then 
                         TriggerEvent('inventory:client:requiredItems', requiredItems, false)
                         QBCore.Functions.Progressbar("security_pass", "Validitating card..", math.random(5000, 10000), false, true, {
                             disableMovement = true,
@@ -107,13 +110,17 @@ RegisterNetEvent('qb-bankrobbery:UseBankcardA', function()
                             StopAnimTask(PlayerPedId(), "anim@gangops@facility@servers@", "hotwire", 1.0)
                             TriggerServerEvent('qb-bankrobbery:server:setBankState', "paleto", true)
                             TriggerServerEvent("QBCore:Server:RemoveItem", "security_card_01", 1)
-                            TriggerServerEvent('qb-doorlock:server:updateState', 4, false)
+                            --TriggerServerEvent('qb-doorlock:server:updateState', 85, false)
+                            TriggerServerEvent('nui_doorlock:server:updateState', 50, false, source, false, true)
+                            TriggerEvent("mhacking:show")
+                            TriggerEvent("mhacking:start", math.random(4, 6), math.random(20, 22), OnHackPaletoDone)
+                            
                             if not copsCalled then
-								local s1, s2 = GetStreetNameAtCoord(pos.x, pos.y, pos.z)
+                                local s1, s2 = Citizen.InvokeNative(0x2EB41072B4C1E4C0, pos.x, pos.y, pos.z, Citizen.PointerValueInt(), Citizen.PointerValueInt())
                                 local street1 = GetStreetNameFromHashKey(s1)
                                 local street2 = GetStreetNameFromHashKey(s2)
                                 local streetLabel = street1
-                                if street2 ~= nil then
+                                if street2 ~= nil then 
                                     streetLabel = streetLabel .. " " .. street2
                                 end
                                 if Config.BigBanks["paleto"]["alarm"] then
@@ -135,5 +142,26 @@ RegisterNetEvent('qb-bankrobbery:UseBankcardA', function()
                 QBCore.Functions.Notify("The security lock is active, the door cannot be opened at the moment..", "error", 5500)
             end
         end)
-    end
+    end 
 end)
+
+function OnHackPaletoDone(success, timeremaining)
+    if success then
+        TriggerEvent('mhacking:hide')
+        TriggerServerEvent('qb-bankrobbery:server:setBankState', "paleto", true)
+    else
+		TriggerEvent('mhacking:hide')
+	end
+end
+
+function OpenPaletoDoor()
+    --TriggerServerEvent('qb-doorlock:server:updateState', 85, false)
+    TriggerServerEvent('nui_doorlock:server:updateState', 50, false, source, false, true)
+    local object = GetClosestObjectOfType(Config.BigBanks["paleto"]["coords"]["x"], Config.BigBanks["paleto"]["coords"]["y"], Config.BigBanks["paleto"]["coords"]["z"], 5.0, Config.BigBanks["paleto"]["object"], false, false, false)
+    local timeOut = 10
+    local entHeading = Config.BigBanks["paleto"]["heading"].closed
+
+    if object ~= 0 then
+        SetEntityHeading(object, Config.BigBanks["paleto"]["heading"].open)
+    end
+end

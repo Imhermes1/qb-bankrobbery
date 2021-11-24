@@ -2,10 +2,10 @@ Config = Config or {}
 
 Config.ItemTiers = 1
 
-Config.MinimumPaletoPolice = 4
-Config.MinimumPacificPolice = 5
-Config.MinimumFleecaPolice = 3
-Config.MinimumThermitePolice = 2
+Config.MinimumPaletoPolice = 0
+Config.MinimumPacificPolice = 0
+Config.MinimumFleecaPolice = 0
+Config.MinimumThermitePolice = 0
 
 Config.RewardTypes = {
     [1] = {
@@ -26,6 +26,9 @@ Config.LockerRewards = {
     },
     ["tier3"] = {
         [1] = {item = "goldbar", minAmount = 1, maxAmount = 2},
+    },
+    ["tier4"] = {
+        [1] = {item = "security_card_02", minAmount = 1, maxAmount = 1},
     },
 }
 
@@ -221,7 +224,7 @@ Config.SmallBanks = {
         ["label"] = "Hawick Ave",
         ["coords"] = vector3(-353.82, -55.37, 49.03),
         ["alarm"] = true,
-        ["object"] = `v_ilev_gb_vauldr`,
+        ["object"] = GetHashKey("v_ilev_gb_vauldr"),
         ["heading"] = {
             closed = 250.0,
             open = 160.0
@@ -513,12 +516,12 @@ Config.BigBanks = {
             [1] = {
                 ["coords"] = vector3(252.55, 221.15, 101.68),
                 ["isOpened"] = false,
-                ["doorId"] = 2
+                ["doorId"] = 70
             },
             [2] = {
                 ["coords"] = vector3(261.15, 215.21, 101.68),
                 ["isOpened"] = false,
-                ["doorId"] = 3
+                ["doorId"] = 71
             }
         },
         ["camId"] = 26,
